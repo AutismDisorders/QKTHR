@@ -6,15 +6,31 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 /// `count_lines`: count lines buffered, without loading the file (upstream `count_lines`).
 pub fn count_lines(path: &Path) -> io::Result<u64> {
-    use std::io::BufRead;
-    let mut lines = 0u64;
-    let reader = io::BufReader::new(fs::File::open(path)?);
-    for line in reader.split(b'\n') {
-        let _ = line?;
-        lines += 1;
+    use std::io::Read;
+    let mut file = fs::File::open(path)?;
+    let mut buffer = [0; 8192];
+    let mut newline_count = 0;
+    let mut has_content = false;
+    let mut last_byte_was_newline = false;
+    loop {
+        let n = file.read(&mut buffer)?;
+        if n == 0 {
+            break;
+        }
+        for &b in &buffer[..n] {
+            has_content = true;
+            if b == b'\n' {
+                newline_count += 1;
+                last_byte_was_newline = true;
+            } else {
+                last_byte_was_newline = false;
+            }
+        }
     }
-    // A trailing newline does not start a new line: count splits, minus the trailing one.
-    Ok(lines.saturating_sub(1))
+    if has_content && !last_byte_was_newline {
+        newline_count += 1;
+    }
+    Ok(newline_count)
 }
 
 /// `build_logdir`: upstream `build_logdir(opt_dir, opt_auto, assume_yes)`.

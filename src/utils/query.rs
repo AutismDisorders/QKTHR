@@ -24,8 +24,8 @@ fn percent_decode(s: &str) -> String {
     while i < bytes.len() {
         match bytes[i] {
             b'%' if i + 2 < bytes.len() => {
-                let h = unhex(bytes[i + 1]);
-                let l = unhex(bytes[i + 2]);
+                let _h = unhex(bytes[i + 1]);
+                let _l = unhex(bytes[i + 2]);
                 if let (Some(h), Some(l)) = (unhex(bytes[i + 1]), unhex(bytes[i + 2])) {
                     out.push(h * 16 + l);
                     i += 3;

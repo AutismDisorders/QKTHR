@@ -5,25 +5,31 @@ use cli::getopts;
 
 fn main() {
     let matches = getopts();
-    
+
     let module = matches.get_one::<String>("module").expect("required");
-    let module_args: Vec<String> = matches.get_many("module_args")
+    let module_args: Vec<String> = matches
+        .get_many("module_args")
         .unwrap_or_default()
         .cloned()
         .collect();
-    let actions: Vec<String> = matches.get_many("actions")
+    let actions: Vec<String> = matches
+        .get_many("actions")
         .unwrap_or_default()
         .cloned()
         .collect();
     let start = *matches.get_one::<usize>("start").unwrap();
     let stop = matches.get_one::<usize>("stop").copied();
     let resume = matches.get_one::<String>("resume").cloned();
-    let encodings: Vec<String> = matches.get_many("encodings")
+    let encodings: Vec<String> = matches
+        .get_many("encodings")
         .unwrap_or_default()
         .cloned()
         .collect();
     let combo_delim = matches.get_one::<String>("combo_delim").unwrap().as_str();
-    let condition_delim = matches.get_one::<String>("condition_delim").unwrap().as_str();
+    let condition_delim = matches
+        .get_one::<String>("condition_delim")
+        .unwrap()
+        .as_str();
     let allow_ignore_failures = matches.get_flag("allow_ignore_failures");
     let assume_yes = matches.get_flag("assume_yes");
     let rate_limit = *matches.get_one::<f64>("rate_limit").unwrap();

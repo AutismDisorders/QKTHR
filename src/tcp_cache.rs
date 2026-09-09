@@ -1,6 +1,6 @@
+use crate::response::Response;
 use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
-use crate::response::Response;
 
 /// TcpCache stores responses for reuse, keyed by connection string (e.g., "host:port").
 #[derive(Debug, Clone)]

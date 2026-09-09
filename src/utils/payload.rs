@@ -1,8 +1,6 @@
-use std::io::{self, BufRead, BufReader};
 use std::fs::File;
+use std::io::{self, BufRead, BufReader};
 use std::path::Path;
-use std::net::{Ipv4Addr};
-use std::str::FromStr;
 
 /// File payload iterator - reads lines from a file
 pub struct FilePayload {
@@ -123,12 +121,12 @@ impl Iterator for GlobPayload {
         // For now, we'll just append the pattern to the base with a counter
         let result = format!("{}{}", self.base, self.current);
         self.current += 1;
-        
+
         // For demonstration, we'll stop after 1000 iterations
         if self.current > 1000 {
             self.done = true;
         }
-        
+
         Some(result)
     }
 }
@@ -217,9 +215,10 @@ impl ProgPayload {
             .stdin(Stdio::null())
             .spawn()?;
 
-        let stdout = child.stdout.take().ok_or_else(|| {
-            io::Error::new(io::ErrorKind::Other, "Failed to capture stdout")
-        })?;
+        let stdout = child
+            .stdout
+            .take()
+            .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "Failed to capture stdout"))?;
         let reader = BufReader::new(stdout);
 
         Ok(Self {

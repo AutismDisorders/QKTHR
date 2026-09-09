@@ -2,7 +2,7 @@ use chrono::Local;
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::UNIX_EPOCH;
 
 /// `count_lines`: count lines buffered, without loading the file (upstream `count_lines`).
 pub fn count_lines(path: &Path) -> io::Result<u64> {

@@ -1,14 +1,12 @@
-use base64::{engine::general_purpose, Engine as _};
-use md5::{Md5, Digest};
-use sha1::{Sha1, Digest as Sha1Digest};
-use urlencoding::{encode, decode};
+use base64::{Engine as _, engine::general_purpose};
+use md5::{Digest, Md5};
+use sha1::{Digest as Sha1Digest, Sha1};
 use std::string::FromUtf8Error;
+use urlencoding::{decode, encode};
 
 /// Hex encoding - convert bytes to hexadecimal string
 pub fn hex_encode(bytes: &[u8]) -> String {
-    bytes.iter()
-        .map(|b| format!("{:02x}", b))
-        .collect()
+    bytes.iter().map(|b| format!("{:02x}", b)).collect()
 }
 
 /// Hex decoding - convert hexadecimal string to bytes
@@ -16,11 +14,11 @@ pub fn hex_decode(hex: &str) -> Result<Vec<u8>, String> {
     if hex.len() % 2 != 0 {
         return Err("Hex string must have even length".to_string());
     }
-    
+
     (0..hex.len())
         .step_by(2)
         .map(|i| {
-            u8::from_str_radix(&hex[i..i+2], 16)
+            u8::from_str_radix(&hex[i..i + 2], 16)
                 .map_err(|_| format!("Invalid hex byte at position {}", i))
         })
         .collect()

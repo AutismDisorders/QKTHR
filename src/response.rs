@@ -1,13 +1,13 @@
-use std::time::Duration;
 use regex::Regex;
+use std::time::Duration;
 
 /// Response represents an HTTP-like response from a service.
 #[derive(Debug, Clone)]
 pub struct Response {
-    pub code: Option<u16>,      // Status code (e.g., 200, 404)
-    pub size: usize,            // Response body size in bytes
-    pub time: Duration,         // Response time
-    pub mesg: Vec<u8>,          // Response body (raw bytes)
+    pub code: Option<u16>, // Status code (e.g., 200, 404)
+    pub size: usize,       // Response body size in bytes
+    pub time: Duration,    // Response time
+    pub mesg: Vec<u8>,     // Response body (raw bytes)
 }
 
 impl Response {
@@ -28,7 +28,9 @@ impl Response {
 
     /// Check if the response contains a given byte slice.
     pub fn contains(&self, pattern: &[u8]) -> bool {
-        self.mesg.windows(pattern.len()).any(|window| window == pattern)
+        self.mesg
+            .windows(pattern.len())
+            .any(|window| window == pattern)
     }
 
     /// Check if the response mesg contains the given fixed string (as UTF-8 lossy).

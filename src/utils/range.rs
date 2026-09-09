@@ -219,7 +219,7 @@ impl Iterator for RangeIter {
                 let out = fmt.render(*cur);
                 if *random {
                     let hi: i64 = 1_000_000_000;
-                    *cur = rand::thread_rng().gen_range(0..=hi);
+                    *cur = rand::rng().random_range(0..=hi);
                 } else {
                     *cur += *step;
                     if *step > 0 && *cur > *stop {

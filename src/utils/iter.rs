@@ -124,7 +124,7 @@ impl Iterator for FileIter {
 /// ProgIter: yield a line from a program's stdout (spawns sh -c).
 pub struct ProgIter {
     reader: Option<Box<dyn BufRead>>,
-    child: Option<std::process::Child>,
+    _child: Option<std::process::Child>,
 }
 
 impl ProgIter {
@@ -142,7 +142,7 @@ impl ProgIter {
         let reader = Box::new(BufReader::new(stdout));
         Ok(Self {
             reader: Some(reader),
-            child: Some(child),
+            _child: Some(child),
         })
     }
 }

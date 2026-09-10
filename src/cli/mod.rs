@@ -1,4 +1,4 @@
-use clap::{Arg, ArgAction, Command, value_parser};
+use clap::{value_parser, Arg, ArgAction, Command};
 
 pub fn getopts() -> clap::ArgMatches {
     Command::new("qkthr")
@@ -7,8 +7,7 @@ pub fn getopts() -> clap::ArgMatches {
         .arg(
             Arg::new("module")
                 .help("Module to run")
-                .required(true)
-                .index(0),
+                .required(true),
         )
         .arg(
             Arg::new("module_args")

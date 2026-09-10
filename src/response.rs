@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use regex::Regex;
 use std::time::Duration;
 
@@ -11,13 +12,13 @@ pub struct Response {
 }
 
 impl Response {
-    /// Create a new Response with default values.
-    pub fn new() -> Self {
+    /// Create a new Response with the given values.
+    pub fn new(code: Option<u16>, mesg: Vec<u8>) -> Self {
         Response {
-            code: None,
-            size: 0,
-            time: Duration::new(0, 0),
-            mesg: Vec::new(),
+            code,
+            size: mesg.len(),
+            time: std::time::Duration::new(0, 0),
+            mesg,
         }
     }
 

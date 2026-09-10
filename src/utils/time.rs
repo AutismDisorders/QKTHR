@@ -31,9 +31,14 @@ impl Timing {
         }
     }
     pub fn elapsed(&mut self) -> Duration {
-        let e = self.start.elapsed();
-        self.elapsed = Some(e);
-        e
+        match self.elapsed {
+            Some(e) => e,
+            None => {
+                let e = self.start.elapsed();
+                self.elapsed = Some(e);
+                e
+            }
+        }
     }
 }
 

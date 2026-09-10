@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 /// Byte/text coercion helpers mirroring upstream `b`/`B` (ISO-8859-1 lossy).
 ///
 /// Python's `bytes.encode('ISO-8859-1', errors='ignore')` drops unencodable
@@ -32,7 +33,9 @@ where
 
 /// `repr23`: printable ASCII stays as-is; otherwise mimic Python `repr(bytes)`.
 pub fn repr23(s: &[u8]) -> String {
-    if s.iter().all(|&c| (0x20..0x7f).contains(&c)) {
+    if s.iter()
+        .all(|&c| (0x20..=0x7e).contains(&c) && c != b'\\' && c != b'\'')
+    {
         String::from_utf8_lossy(s).into_owned()
     } else {
         let mut out = String::new();
@@ -43,7 +46,7 @@ pub fn repr23(s: &[u8]) -> String {
                 b'\t' => out.push_str("\\t"),
                 b'\\' => out.push_str("\\\\"),
                 b'\'' => out.push_str("\\'"),
-                c if c < 0x20 || c >= 0x7f => out.push_str(&format!("\\x{:02x}", c)),
+                c if c < 0x20 || c == 0x7f || c >= 0x80 => out.push_str(&format!("\\x{:02x}", c)),
                 c => out.push(c as char),
             }
         }

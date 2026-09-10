@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use chrono::Local;
 use std::fs;
 use std::io;
@@ -37,12 +38,13 @@ pub fn count_lines(path: &Path) -> io::Result<u64> {
 pub fn build_logdir(
     opt_dir: Option<&str>,
     opt_auto: Option<&str>,
-    assume_yes: bool,
+    _assume_yes: bool,
 ) -> io::Result<Option<PathBuf>> {
     if let Some(desc) = opt_auto {
         create_time_dir(opt_dir.unwrap_or("/tmp/patator"), desc).map(Some)
     } else if let Some(dir) = opt_dir {
-        create_dir(dir, assume_yes).map(Some)
+        // Just return the directory as is, without creating or wiping it.
+        Ok(Some(PathBuf::from(dir)))
     } else {
         Ok(None)
     }
@@ -55,18 +57,10 @@ pub fn create_dir(top_path: &str, assume_yes: bool) -> io::Result<PathBuf> {
         .or_else(|_| fs::create_dir_all(top_path).and_then(|_| fs::canonicalize(top_path)))?;
     if fs::read_dir(&top)?.next().is_some() {
         if !assume_yes {
-            eprint!(
-                "Directory {:?} is not empty, do you want to wipe it ? [Y/n]: ",
-                top
-            );
-            let mut answer = String::new();
-            io::stdin().read_line(&mut answer)?;
-            if answer.trim().eq_ignore_ascii_case("n") {
-                return Err(io::Error::new(
-                    io::ErrorKind::AlreadyExists,
-                    "directory not wiped",
-                ));
-            }
+            return Err(io::Error::new(
+                io::ErrorKind::AlreadyExists,
+                "directory not wiped",
+            ));
         }
         for entry in fs::read_dir(&top)? {
             let path = entry?.path();

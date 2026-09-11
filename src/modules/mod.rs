@@ -5,6 +5,7 @@ pub mod dummy_test;
 pub mod finger;
 pub mod ftp;
 pub mod http;
+pub mod http_fuzz;
 pub mod ike_enum;
 pub mod imap;
 pub mod keystore_pass;

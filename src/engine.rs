@@ -46,28 +46,30 @@ impl FuzzEngine {
 
     /// Run the fuzzing engine with the given payload generators
     pub fn run(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        log::info!("Starting fuzzing engine");
+        log::debug!("Engine config: {:?}", self.config);
+
         // Print elapsed time using start_time
         let elapsed = self.state.lock().unwrap().start_time.elapsed();
-        println!("  Elapsed time: {:.2?}", elapsed);
+        log::info!("Elapsed time: {:.2?}", elapsed);
 
         // Show that we respected the configuration limits
         if self.config.assume_yes {
-            println!("  Note: Running with assume_yes=true (non-interactive mode)");
+            log::info!("Running with assume_yes=true (non-interactive mode)");
         }
         if self.config.allow_ignore_failures {
-            println!("  Note: Running with allow_ignore_failures=true");
+            log::warn!("Running with allow_ignore_failures=true (safeguard overridden)");
         }
-        println!(
-            "  Note: Used combo delimiter: '{}'",
-            self.config.combo_delim
-        );
-        println!(
-            "  Note: Used condition delimiter: '{}'",
+        log::info!("Using combo delimiter: '{}'", self.config.combo_delim);
+        log::info!(
+            "Using condition delimiter: '{}'",
             self.config.condition_delim
         );
 
         // Initialize the module
+        log::debug!("Initializing module in engine...");
         self.module.initialize();
+        log::debug!("Module initialized in engine");
 
         Ok(())
     }

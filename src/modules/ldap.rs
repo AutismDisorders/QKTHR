@@ -1,4 +1,7 @@
 use crate::module::Module;
+use crate::response::Response;
+use ldap3::LdapConn;
+use std::time::Duration;
 
 /// LDAP authentication module
 pub struct LdapModule {
@@ -46,10 +49,69 @@ impl LdapModule {
         self.timeout = timeout;
         self
     }
+}
 
+impl Module for LdapModule {
+    /// Create a new instance of the module
+    fn new() -> Self
+    where
+        Self: Sized,
+    {
+        Self::new()
+    }
+
+    /// Initialize the module before starting the fuzzing process
     fn initialize(&mut self) {
         if self.ldap_url.is_empty() {
             panic!("LDAP URL must be set for LDAP module");
         }
+    }
+
+    /// Perform an attack with the given payload
+    ///
+    /// Returns a Response containing the result of the attack, or an error message.
+    fn attack(&self, payload: String) -> Result<Response, String> {
+        // Format payload as password
+        let password = payload.trim();
+        if password.is_empty() {
+            return Err("Empty payload".to_string());
+        }
+
+        // Build the DN for the user
+        let dn = if self.user.contains("=") {
+            // User already provided as full DN
+            self.user.clone()
+        } else {
+            // Assume simple username, construct basic DN
+            format!("cn={},{}", self.user, self.ldap_url)
+        };
+
+        // Connect to LDAP server with the provided credentials
+        let mut ldap = LdapConn::new(&self.ldap_url)
+            .map_err(|e| format!("Failed to connect to LDAP server: {}", e))?;
+
+        // Set timeout
+        ldap.with_timeout(Duration::from_secs(self.timeout));
+
+        // Try to bind with the provided password
+        let result = ldap.simple_bind(&dn, password);
+
+        match result {
+            Ok(_) => {
+                // Successful bind
+                let body = format!("LDAP bind successful for user: {}", dn);
+                Ok(Response::new(Some(200), body.as_bytes().to_vec()))
+            }
+            Err(e) => {
+                // Bind failed
+                let body = format!("LDAP bind failed for user {}: {}", dn, e);
+                Ok(Response::new(Some(401), body.as_bytes().to_vec()))
+            }
+        }
+    }
+
+    /// Finalize the module after the fuzzing process is complete
+    fn finalize(&self) {
+        // Clean up resources if needed
     }
 }

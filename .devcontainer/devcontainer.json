@@ -1,4 +1,0 @@
-{
-  "image": "ghcr.io/devcontainers/templates/rust:5.0.0",
-  "features": {"ghcr.io/devcontainers/features/rust:1": {}}
-}
